@@ -10,14 +10,15 @@ from import_export import resources
 
 
 class ArticuloResource(resources.ModelResource):
+
     class Meta:
         model = inventario.Articulo
         fields = (
-        'nombre', 'fabricante__nombre', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra', 'fecha_creacion',
-        'tiempo_entrega')
+            'nombre', 'fabricante__nombre', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra', 'fecha_creacion',
+            'tiempo_entrega')
         export_oder = (
-        'nombre', 'fabricante__nombre', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra', 'fecha_creacion',
-        'tiempo_entrega')
+            'nombre', 'fabricante__nombre', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra', 'fecha_creacion',
+            'tiempo_entrega')
     # end class
 
 
@@ -25,8 +26,8 @@ class ArticuloResource(resources.ModelResource):
 
 class ArticuloAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
-    'nombre', 'thumbnail', 'fabricante', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra', 'fecha_creacion',
-    'tiempo_entrega', 'precio_')
+        'nombre', 'thumbnail', 'fabricante', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra', 'fecha_creacion',
+        'tiempo_entrega', 'precio_')
     search_fields = ('nombre', 'descripcion', 'fabricante')
     list_filter = ('activado', 'fabricante')
     resource_class = ArticuloResource
@@ -47,6 +48,7 @@ class CuentaStaked(admin.StackedInline):
 # end class
 
 class BodegaResource(resources.ModelResource):
+
     class Meta:
         model = inventario.Bodega
         fields = ('nombre', 'identi', 'direccion', 'telefono')
@@ -58,7 +60,7 @@ class BodegaResource(resources.ModelResource):
 
 class BodegaAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
-    'nombre', 'identi', 'direccion', 'telefono', 'precio_activos', 'precio_activos_no_serial', 'capital_en_bodega')
+        'nombre', 'identi', 'direccion', 'telefono', 'precio_activos', 'precio_activos_no_serial', 'capital_en_bodega')
     search_fields = ('nombre', 'identi', 'direccion', 'telefono')
     form = BodegaForm
     inlines = (CuentaStaked,)
@@ -103,13 +105,14 @@ class ActivoNoSerialAdmin(ExportMixin, admin.ModelAdmin):
 # end class
 
 class ArticuloNoResource(resources.ModelResource):
+
     class Meta:
         model = inventario.ArticuloNoSerial
         fields = ('nombre', 'fabricante__nombre', 'unidad', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra',
                   'fecha_creacion', 'precio', 'tiempo_entrega')
         export_order = (
-        'nombre', 'fabricante__nombre', 'unidad', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra',
-        'fecha_creacion', 'precio', 'tiempo_entrega', 'activado')
+            'nombre', 'fabricante__nombre', 'unidad', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra',
+            'fecha_creacion', 'precio', 'tiempo_entrega', 'activado')
     # end class
 
 
@@ -118,8 +121,8 @@ class ArticuloNoResource(resources.ModelResource):
 
 class ArticuloNoSerialAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
-    'nombre', 'thumbnail', 'fabricante', 'unidad', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra',
-    'fecha_creacion', 'precio', 'tiempo_entrega', 'activado')
+        'nombre', 'thumbnail', 'fabricante', 'unidad', 'cantidad_minima_en_bodega', 'cantidad_minima_de_compra',
+        'fecha_creacion', 'precio', 'tiempo_entrega', 'activado')
     search_fields = ('nombre', 'descripcion', 'fabricante')
     list_filter = ('fabricante',)
     form = ArticuloNoSerialForm
@@ -154,23 +157,27 @@ class TrazabilidadAdmin(admin.StackedInline):
 # end class
 
 class ActivoResource(resources.ModelResource):
+
     class Meta:
         model = inventario.Activo
-        fields = ('articulo__nombre', 'tipo__nombre', 'bodega__nombre', 'serial', 'precio', 'activado', 'instalado')
+        fields = ('articulo__nombre', 'tipo__nombre', 'bodega__nombre',
+                  'serial', 'precio', 'activado', 'instalado')
         export_order = (
-        'articulo__nombre', 'tipo__nombre', 'bodega__nombre', 'serial', 'precio', 'activado', 'instalado')
+            'articulo__nombre', 'tipo__nombre', 'bodega__nombre', 'serial', 'precio', 'activado', 'instalado')
     # end class
 
 
 # end class
 
 class ActivoAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ('articulo', 'tipo', 'bodega', 'serial', 'activado', 'instalado')
+    list_display = ('articulo', 'tipo', 'bodega',
+                    'serial', 'activado', 'instalado')
     search_fields = ('articulo__nombre', 'bodega__nombre')
     list_filter = ('articulo', 'bodega', 'tipo')
     inlines = (TrazabilidadAdmin,)
     form = ActivoForm
-    fieldsets = [(None, {'classes': ('suit-tab', 'suit-tab-activo'), 'fields': ['articulo', 'tipo', 'serial']})]
+    fieldsets = [(None, {'classes': (
+        'suit-tab', 'suit-tab-activo'), 'fields': ['articulo', 'tipo', 'serial']})]
     suit_form_tabs = (('activo', '1.Activo'), ('trazabilidad', 'Trazabilidad'))
     resource_class = ActivoResource
 
@@ -217,7 +224,8 @@ class ActaRequisionAdmin(admin.ModelAdmin):
     # raw_id_fields = ('central','bodega')
     form = ActaRequisicionForm
     inlines = (RequisionArticuloStaked, RequesicionNoSerialStaked)
-    fieldsets = [(None, {'classes': ('suit-tab', 'suit-tab-actarequisicion'), 'fields': ['central', 'descripcion']})]
+    fieldsets = [(None, {'classes': (
+        'suit-tab', 'suit-tab-actarequisicion'), 'fields': ['central', 'descripcion']})]
     suit_form_tabs = (('actarequisicion', '1.Acta de requesición'), ('requesicionarticulo', '2.Activos'),
                       ('requesicionnoserial', '3.Activos no serial'))
 
@@ -236,7 +244,8 @@ class RequisionNoSerialAdmin(admin.ModelAdmin):
     list_filter = ('acta', 'activo')
 
     class Media:
-        js = ('inventario/js/jquery.form.min.js', 'inventario/js/notificacion.js')
+        js = ('inventario/js/jquery.form.min.js',
+              'inventario/js/notificacion.js')
     # end class
 
 
@@ -251,25 +260,31 @@ class SalidaNoSerialStaked(admin.StackedInline):
 # end class
 
 class ActaSalidaResource(resources.ModelResource):
+
     class Meta:
         model = inventario.ActaSalida
-        fields = ('custodio__nombre', 'salida__nombre', 'destino__nombre', 'creado_por', 'fecha', 'descripcion')
-        export_order = ('custodio__nombre', 'salida__nombre', 'destino__nombre', 'creado_por', 'fecha', 'descripcion')
+        fields = ('custodio__nombre', 'salida__nombre',
+                  'destino__nombre', 'creado_por', 'fecha', 'descripcion')
+        export_order = ('custodio__nombre', 'salida__nombre',
+                        'destino__nombre', 'creado_por', 'fecha', 'descripcion')
     # end class
 
 
 # end class
 
 class ActaSalidaAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ('custodio', 'salida', 'destino', 'creado_por', 'fecha', 'descripcion', 'archivo_')
+    list_display = ('custodio', 'salida', 'destino',
+                    'creado_por', 'fecha', 'descripcion', 'archivo_')
     list_filter = ('custodio', 'salida', 'destino', 'creado_por')
-    search_fields = ('custodio__nombre', 'salida__nombre', 'destino__nombre', 'creado_por')
+    search_fields = ('custodio__nombre', 'salida__nombre',
+                     'destino__nombre', 'creado_por')
     inlines = (SalidaNoSerialStaked,)
     # raw_id_fields = ('custodio','destino')
     form = ActaSalidaForm
     fieldsets = [(None, {'classes': ('suit-tab', 'suit-tab-actasalida'),
                          'fields': ['custodio', 'destino', 'activos', 'descripcion', 'archivo']})]
-    suit_form_tabs = (('actasalida', '1.Acta Salida'), ('salidanoserial', '2.Salida no serial'))
+    suit_form_tabs = (('actasalida', '1.Acta Salida'),
+                      ('salidanoserial', '2.Salida no serial'))
     resource_class = ActaSalidaResource
 
 
@@ -282,7 +297,8 @@ class SalidaNoSerialAdmin(ExportMixin, admin.ModelAdmin):
     form = SalidaNoSerialForm
 
     class Media:
-        js = ('inventario/js/jquery.form.min.js', 'inventario/js/notificacion.js')
+        js = ('inventario/js/jquery.form.min.js',
+              'inventario/js/notificacion.js')
     # end class
 
 
@@ -297,10 +313,13 @@ class EntradaNoSerialStacked(admin.StackedInline):
 # end class
 
 class ActaEntradaResource(resources.ModelResource):
+
     class Meta:
         model = inventario.ActaEntrada
-        fields = ('custodio__nombre', 'origen__nombre', 'destino__nombre', 'fecha')
-        export_order = ('custodio__nombre', 'origen__nombre', 'destino__nombre', 'fecha')
+        fields = ('custodio__nombre', 'origen__nombre',
+                  'destino__nombre', 'fecha')
+        export_order = ('custodio__nombre', 'origen__nombre',
+                        'destino__nombre', 'fecha')
     # end class
 
 
@@ -316,7 +335,8 @@ class ActaEntradaAdmin(ExportMixin, admin.ModelAdmin):
     form = ActaEntradaForm
     fieldsets = [(None, {'classes': ('suit-tab', 'suit-tab-actaentrada'),
                          'fields': ['custodio', 'origen', 'activos', 'descripcion', 'imagen']})]
-    suit_form_tabs = (('actaentrada', '1.Acta Entrada'), ('entradanoserial', '3.Activos no serial'))
+    suit_form_tabs = (('actaentrada', '1.Acta Entrada'),
+                      ('entradanoserial', '3.Activos no serial'))
     resource_class = ActaEntradaResource
 
 
@@ -342,7 +362,7 @@ class CompraAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'classes': ('suit-tab', 'suit-tab-actaentrada'), 'fields': ['custodio', 'descripcion', 'imagen']})]
     suit_form_tabs = (
-    ('actaentrada', '1.Acta Entrada'), ('activo', '2.Activos'), ('entradanoserial', '3.Activos no serial'))
+        ('actaentrada', '1.Acta Entrada'), ('activo', '2.Activos'), ('entradanoserial', '3.Activos no serial'))
 
 
 # end class
@@ -364,17 +384,21 @@ class ProveedorAdmin(admin.ModelAdmin):
 # end class
 
 class CuentaResource(resources.ModelResource):
+
     class Meta:
         model = inventario.Cuenta
-        fields = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login')
-        export_order = ('username', 'first_name', 'last_name', 'email', 'date_joined', 'last_login')
+        fields = ('username', 'first_name', 'last_name',
+                  'email', 'date_joined', 'last_login')
+        export_order = ('username', 'first_name', 'last_name',
+                        'email', 'date_joined', 'last_login')
     # end class
 
 
 # end class
 
 class CuentaAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'bodega', 'email', 'date_joined', 'last_login')
+    list_display = ('username', 'first_name', 'last_name',
+                    'bodega', 'email', 'date_joined', 'last_login')
     search_fields = ('username', 'first_name', 'last_name', 'email')
     list_filter = ('bodega',)
     form = CuentaForm
@@ -384,7 +408,8 @@ class CuentaAdmin(ExportMixin, admin.ModelAdmin):
 # end class
 
 class TipoActivoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'unidad', 'marker', 'marker_2', 'thumbnail', 'thumbnail2')
+    list_display = ('nombre', 'unidad', 'marker',
+                    'marker_2', 'thumbnail', 'thumbnail2')
     list_editable = ('marker', 'marker_2')
     search_fields = ('nombre', 'unidad__nombre')
 

@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'geo',
         'USER': 'postgres',
         'PASSWORD': 'Exile*74522547',
-        'HOST': '127.0.0.1',
+        'HOST': '104.236.33.228',
         'PORT': '5432',
     }
 }
@@ -124,21 +124,24 @@ AUTH_PASSWORD_VALIDATORS = [
 
 SUIT_CONFIG = {
     'ADMIN_NAME': 'GeoActivos',
-    'SEARCH_URL':'',
+    'SEARCH_URL': '',
     'MENU_OPEN_FIRST_CHILD': True,
     'MENU_ICONS': {
         'sites': 'icon-leaf',
         'auth': 'icon-lock',
-        'inventario':'icon-briefcase',
-        'luminaria':'icon-map-marker',
+        'inventario': 'icon-briefcase',
+        'luminaria': 'icon-map-marker',
     },
     'MENU': (
-      # To reorder existing apps use following definition
-      'sites',
-        {'app':'auth', 'icon':'icon-lock', 'models': ('user', 'group')},
-        {'app':'inventario', 'icon':'icon-briefcase','label': 'Inventario', 'models':('cuenta','custodio','bodega','central','proveedor','fabricante','articulo','tipoactivo','activo','articulonoserial','activonoserial')},
-        {'app':'inventario', 'icon':'icon-cog','label': 'Operaciones de bodega', 'models':('actarequisicion','actasalida','actaentrada')},
-        {'app':'geo', 'icon':'icon-map-marker','label': 'Geo', 'models':('zona','direccion','geoactivo')},
+        # To reorder existing apps use following definition
+        'sites',
+        {'app': 'auth', 'icon': 'icon-lock', 'models': ('user', 'group')},
+        {'app': 'inventario', 'icon': 'icon-briefcase', 'label': 'Inventario', 'models': (
+            'cuenta', 'custodio', 'bodega', 'central', 'proveedor', 'fabricante', 'articulo', 'tipoactivo', 'activo', 'articulonoserial', 'activonoserial')},
+        {'app': 'inventario', 'icon': 'icon-cog', 'label': 'Operaciones de bodega',
+            'models': ('actarequisicion', 'actasalida', 'actaentrada')},
+        {'app': 'geo', 'icon': 'icon-map-marker', 'label': 'Geo',
+            'models': ('zona', 'direccion', 'geoactivo')},
 
     )
 }
@@ -160,7 +163,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT =  os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/mario/geoactivos/media/'

@@ -5,7 +5,7 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from cuser.middleware import CuserMiddleware
-from django.db.models import  Sum, F, DecimalField
+from django.db.models import Sum, F, DecimalField
 from inventario.widgets import MoneyInput
 
 
@@ -70,7 +70,8 @@ class Articulo(models.Model):
     cantidad_minima_en_bodega = models.IntegerField()
     cantidad_minima_de_compra = models.IntegerField()  # ROQ
     fecha_creacion = models.DateTimeField(auto_now=True)
-    imagen = models.ImageField(upload_to='articulos', null=True, blank=True)  # NO
+    imagen = models.ImageField(
+        upload_to='articulos', null=True, blank=True)  # NO
     tiempo_entrega = models.IntegerField('Tiempo de entrega(Dias)')
     activado = models.BooleanField(default=True)  # NO True
     precio = models.DecimalField(max_digits=19, decimal_places=2)
@@ -83,7 +84,8 @@ class Articulo(models.Model):
     def precio_(self):
         vals = str(self.precio).split('.')
         money = MoneyInput()
-        value = money.intToStringWithCommas(int(vals[0])).replace(',', '.') + ',' + vals[1]
+        value = money.intToStringWithCommas(
+            int(vals[0])).replace(',', '.') + ',' + vals[1]
         return "$" + value
 
     # end def
@@ -111,8 +113,8 @@ class Articulo(models.Model):
 
 
 class Bodega(models.Model):
-    identi = models.CharField('Identificación', max_length=45)
-    nombre = models.CharField(max_length=45)
+    identi = models.CharField('Identificación', max_length=100)
+    nombre = models.CharField(max_length=100)
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=10)
 
@@ -128,12 +130,14 @@ class Bodega(models.Model):
     # end def
 
     def precio_activos(self):
-        activos = Activo.objects.filter(bodega=self).aggregate(total=Sum('articulo__precio'))
+        activos = Activo.objects.filter(bodega=self).aggregate(
+            total=Sum('articulo__precio'))
         if activos['total']:
             total = activos['total']
             vals = str(total).split('.')
             money = MoneyInput()
-            value = money.intToStringWithCommas(int(vals[0])).replace(',', '.') + ',' + vals[1]
+            value = money.intToStringWithCommas(
+                int(vals[0])).replace(',', '.') + ',' + vals[1]
             return u"$ %s" % value
         # end if
         else:
@@ -145,12 +149,14 @@ class Bodega(models.Model):
     def precio_activos_no_serial(self):
         agg = Sum(F('articulo__precio') * F('cantidad'))
         agg.output_field = DecimalField(max_digits=19, decimal_places=2)
-        nserial = ActivoNoSerial.objects.filter(bodega=self).aggregate(total=agg)
+        nserial = ActivoNoSerial.objects.filter(
+            bodega=self).aggregate(total=agg)
         if nserial['total']:
             total = nserial['total']
             vals = str(total).split('.')
             money = MoneyInput()
-            value = money.intToStringWithCommas(int(vals[0])).replace(',', '.') + ',' + vals[1]
+            value = money.intToStringWithCommas(
+                int(vals[0])).replace(',', '.') + ',' + vals[1]
             return u"$ %s" % value
         else:
             return u"$ %d" % 0
@@ -159,11 +165,13 @@ class Bodega(models.Model):
     # end def
 
     def precio_total(self):
-        activos = Activo.objects.filter(bodega=self).aggregate(total=Sum('articulo__precio'))
+        activos = Activo.objects.filter(bodega=self).aggregate(
+            total=Sum('articulo__precio'))
         agg = Sum(F('articulo__precio') * F('cantidad'))
 
         agg.output_field = DecimalField(max_digits=19, decimal_places=2)
-        nserial = ActivoNoSerial.objects.filter(bodega=self).aggregate(total=agg)
+        nserial = ActivoNoSerial.objects.filter(
+            bodega=self).aggregate(total=agg)
 
         if activos['total']:
             total = activos['total']
@@ -178,7 +186,8 @@ class Bodega(models.Model):
         else:
             vals = str(total).split('.')
             money = MoneyInput()
-            value = money.intToStringWithCommas(int(vals[0])).replace(',', '.') + ',' + vals[1]
+            value = money.intToStringWithCommas(
+                int(vals[0])).replace(',', '.') + ',' + vals[1]
             return value
         # end if
 
@@ -196,7 +205,6 @@ class Bodega(models.Model):
 
 
 # end calss
-
 
 
 class Cuenta(User):
@@ -235,7 +243,8 @@ class ArticuloNoSerial(models.Model):
     cantidad_minima_en_bodega = models.IntegerField()
     cantidad_minima_de_compra = models.IntegerField()  # ROQ
     activado = models.BooleanField(default=True)  # NO True
-    imagen = models.ImageField(upload_to='articulos', null=True, blank=True)  # NO
+    imagen = models.ImageField(
+        upload_to='articulos', null=True, blank=True)  # NO
     unidad = models.CharField(max_length=10)
     precio = models.DecimalField(max_digits=19, decimal_places=2)
     fecha_creacion = models.DateTimeField(auto_now=True)
@@ -243,7 +252,7 @@ class ArticuloNoSerial(models.Model):
 
     class Meta:
         verbose_name = "Articulo no serial"
-        verbose_name_plural = "Aticulos no seriales"
+        verbose_name_plural = "Articulos no seriales"
 
     # end class
 
@@ -327,8 +336,10 @@ class LogArticulo(models.Model):
 class TipoActivo(models.Model):
     nombre = models.CharField(max_length=200)
     unidad = models.CharField(max_length=200)
-    marker = models.ImageField(upload_to='marker', verbose_name="Marcador", blank=True, null=True)
-    marker_2 = models.ImageField(upload_to='marker2', verbose_name="Marcador seleccionado", blank=True, null=True)
+    marker = models.ImageField(
+        upload_to='marker', verbose_name="Marcador", blank=True, null=True)
+    marker_2 = models.ImageField(
+        upload_to='marker2', verbose_name="Marcador seleccionado", blank=True, null=True)
 
     class Meta:
         verbose_name = 'Tipo de Activo'
@@ -389,7 +400,6 @@ class Activo(models.Model):
         verbose_name_plural = "Activos Seriales"
     # end class
 
-
     def save(self, *args, **kwargs):
         user = CuserMiddleware.get_user()
         cuenta = Cuenta.objects.filter(pk=user.pk).first()
@@ -399,6 +409,7 @@ class Activo(models.Model):
         # end if
     # end def
 # end class
+
 
 class Custodio(models.Model):
     identi = models.CharField('Identificación', max_length=45)
@@ -412,6 +423,7 @@ class Custodio(models.Model):
     # end def
 # end class
 
+
 class ActaRequisicion(models.Model):
     central = models.ForeignKey(Central)
     bodega = models.ForeignKey(Bodega)
@@ -424,6 +436,7 @@ class ActaRequisicion(models.Model):
     # end class
 # end class
 
+
 class RequisicionArticulo(models.Model):
     acta = models.ForeignKey(ActaRequisicion)
     articulo = models.ForeignKey(Articulo)
@@ -434,6 +447,7 @@ class RequisicionArticulo(models.Model):
         verbose_name_plural = 'Activos'
     # end class
 # end class
+
 
 class RequisicionNoSerial(models.Model):
     acta = models.ForeignKey(ActaRequisicion)
@@ -453,7 +467,8 @@ class ActaSalida(models.Model):
     custodio = models.ForeignKey(Custodio)
     salida = models.ForeignKey(Bodega, related_name='salida')
     destino = models.ForeignKey(Bodega, null=True, related_name='destino')
-    archivo = models.FileField('Acta', upload_to='actas_salida', null=True, blank=True)
+    archivo = models.FileField(
+        'Acta', upload_to='actas_salida', null=True, blank=True)
     descripcion = models.TextField(max_length=500)
     creado_por = models.ForeignKey(Cuenta)
 
@@ -487,6 +502,7 @@ class ActaSalida(models.Model):
     # end def
 # end class
 
+
 @receiver(m2m_changed, sender=ActaSalida.activos.through)
 def actaSalida_slot(sender, instance, action, **kwargs):
     """
@@ -494,16 +510,21 @@ def actaSalida_slot(sender, instance, action, **kwargs):
     """
     if action == 'post_add':
         instance.save()
-        articulos = Articulo.objects.filter(activo__actasalida=instance).distinct('id')
+        articulos = Articulo.objects.filter(
+            activo__actasalida=instance).distinct('id')
         for a in articulos:
-            cant = Activo.objects.filter(bodega=instance.salida, articulo=a).count()
-            LogArticulo(articulo=a, cantidad=cant, bodega=instance.salida).save()
+            cant = Activo.objects.filter(
+                bodega=instance.salida, articulo=a).count()
+            LogArticulo(articulo=a, cantidad=cant,
+                        bodega=instance.salida).save()
         # end for
         for activo in instance.activos.all():
-            TrazabilidadActivo(activo=activo, mensage='salida de bodega').save()
+            TrazabilidadActivo(
+                activo=activo, mensage='salida de bodega').save()
         # end for
     # end if
 # end def
+
 
 class SalidaNoSerial(models.Model):
     acta = models.ForeignKey(ActaSalida)
@@ -518,9 +539,11 @@ class SalidaNoSerial(models.Model):
 
     def save(self, *args, **kwargs):
         salida = super(SalidaNoSerial, self).save(*args, **kwargs)
-        ActivoNoSerial.objects.filter(pk=self.activo.pk).update(cantidad=F('cantidad') - self.cantidad)
+        ActivoNoSerial.objects.filter(pk=self.activo.pk).update(
+            cantidad=F('cantidad') - self.cantidad)
         activo = ActivoNoSerial.objects.filter(pk=self.activo.pk).first()
-        LogNoSerial(activo=activo, cantidad=activo.cantidad, bodega=activo.bodega).save()
+        LogNoSerial(activo=activo, cantidad=activo.cantidad,
+                    bodega=activo.bodega).save()
         return salida
     # end def
 # end class
@@ -530,9 +553,11 @@ class ActaEntrada(models.Model):
     activos = models.ManyToManyField(Activo, blank=True)
     custodio = models.ForeignKey(Custodio)
     fecha = models.DateTimeField(auto_now_add=True)
-    origen = models.ForeignKey(Bodega, null=True, blank=True, related_name='origen_')
+    origen = models.ForeignKey(
+        Bodega, null=True, blank=True, related_name='origen_')
     destino = models.ForeignKey(Bodega, related_name='destino_')
-    imagen = models.ImageField(upload_to='actas_entrada', null=True, blank=True)
+    imagen = models.ImageField(
+        upload_to='actas_entrada', null=True, blank=True)
     descripcion = models.TextField(max_length=500)
 
     class Meta:
@@ -567,6 +592,7 @@ class ActaEntrada(models.Model):
     # end def
 # end class
 
+
 @receiver(m2m_changed, sender=ActaEntrada.activos.through)
 def actaEntrada_slot(sender, instance, action, **kwargs):
     """
@@ -574,17 +600,21 @@ def actaEntrada_slot(sender, instance, action, **kwargs):
     """
     if action == 'post_add':
         instance.save()
-        articulos = Articulo.objects.filter(activo__actaentrada=instance).distinct('id')
+        articulos = Articulo.objects.filter(
+            activo__actaentrada=instance).distinct('id')
         compra = Compra.objects.filter(pk=instance.pk).first()
         for a in articulos:
             cant = Activo.objects.filter(articulo=a).count()
-            LogArticulo(articulo=a, cantidad=cant, bodega=instance.destino).save()
+            LogArticulo(articulo=a, cantidad=cant,
+                        bodega=instance.destino).save()
         # end for
         for activo in instance.activos.all():
-            TrazabilidadActivo(activo=activo, bodega=instance.destino, mensage='entrada de bodega').save()
+            TrazabilidadActivo(
+                activo=activo, bodega=instance.destino, mensage='entrada de bodega').save()
         # end for
     # end if
 # end def
+
 
 class EntradaNoSerial(models.Model):
     acta = models.ForeignKey(ActaEntrada)
@@ -600,7 +630,8 @@ class EntradaNoSerial(models.Model):
         super(EntradaNoSerial, self).save(*args, **kwargs)
         self.activo.cantidad = self.activo.cantidad + self.cantidad
         self.activo.save()
-        LogNoSerial(activo=self.activo, cantidad=self.activo.cantidad, bodega=self.activo.bodega).save()
+        LogNoSerial(activo=self.activo, cantidad=self.activo.cantidad,
+                    bodega=self.activo.bodega).save()
     # end def
 
 
@@ -618,6 +649,7 @@ class Compra(ActaEntrada):
         # end if
     # ens def
 # end class
+
 
 class TrazabilidadActivo(models.Model):
     activo = models.ForeignKey(Activo)

@@ -8,13 +8,13 @@ from inventario import models as inventario
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
-from geoActivos.widgets import  LinkToChangeList, LinkToChangeModel, IFrameToChangeList
+from geoActivos.widgets import LinkToChangeList, LinkToChangeModel, IFrameToChangeList
 from django.db.models import Q
 from django_select2.forms import Select2Widget
 
 
-
 class EntradaNoSerialForm(forms.ModelForm):
+
     class Meta:
         model = EntradaNoSerial
         exclude = ()
@@ -23,6 +23,7 @@ class EntradaNoSerialForm(forms.ModelForm):
         }
     # end class
 # end class
+
 
 class ArticuloForm(forms.ModelForm):
 
@@ -37,7 +38,9 @@ class ArticuloForm(forms.ModelForm):
     # end class
 # end class
 
+
 class ArticuloNoSerialForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super(ArticuloNoSerialForm, self).__init__(*args, **kwargs)
     # self.fields['precio'].widget = MoneyInput()
@@ -49,19 +52,20 @@ class ArticuloNoSerialForm(forms.ModelForm):
     # end class
 # end class
 
+
 class CuentaForm(UserCreationForm):
     CHOICES = (
         ('Operativo', 'Operativo'),
         ('Compras', 'Compras'),
     )
-    perfil = forms.ModelChoiceField(queryset=Group.objects.all(), required=True, label='Perfil')
+    perfil = forms.ModelChoiceField(
+        queryset=Group.objects.all(), required=True, label='Perfil')
 
     def __init__(self, *args, **kwargs):
         super(CuentaForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
             tipo = Group.objects.filter(user=self.instance).first()
             if tipo:
-                self.fields['perfil'].widget.attrs['disabled'] = True
                 self.initial['perfil'] = tipo
             # end if
         # end if
@@ -70,7 +74,7 @@ class CuentaForm(UserCreationForm):
     class Meta:
         model = Cuenta
         exclude = (
-        'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined', 'groups', 'user_permissions', 'password')
+            'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined', 'groups', 'user_permissions', 'password')
 
     # end class
 
@@ -80,7 +84,6 @@ class CuentaForm(UserCreationForm):
         cuenta.save()
         cuenta.groups.add(self.cleaned_data['perfil'])
         return cuenta
-
     # end def
 
 
@@ -106,7 +109,8 @@ class ActaEntradaForm(forms.ModelForm):
                         bodega=cuenta.bodega)
                 # end if
             if self.fields.has_key('origen'):
-                self.fields['origen'].queryset = Bodega.objects.exclude(pk=cuenta.bodega.pk)
+                self.fields['origen'].queryset = Bodega.objects.exclude(
+                    pk=cuenta.bodega.pk)
             # end if
         # end if
     # end def
@@ -128,11 +132,13 @@ class ActaEntradaForm(forms.ModelForm):
                 self.instance.creado_por = cuenta
                 return super(ActaEntradaForm, self).clean()
             else:
-                raise forms.ValidationError("Necesita tener una cuenta para crear el Apta de Salida")
+                raise forms.ValidationError(
+                    "Necesita tener una cuenta para crear el Apta de Salida")
             # end def
         # end if
     # end def
 # end class
+
 
 class CompraActivoForm(forms.ModelForm):
     serial = forms.CharField(max_length=60)
@@ -171,17 +177,21 @@ class CompraActivoForm(forms.ModelForm):
                                                                               articulo=articulo)
             return self.instance
         else:
-            activo = Activo(serial=serial, alias=alias, precio=precio, articulo=articulo)
+            activo = Activo(serial=serial, alias=alias,
+                            precio=precio, articulo=articulo)
             activo.save()
 
             actaentrada.activos.add(activo)
-            activos = ActaEntrada.activos.through.objects.filter(activo=activo, actaentrada=actaentrada).first()
+            activos = ActaEntrada.activos.through.objects.filter(
+                activo=activo, actaentrada=actaentrada).first()
             return activos
         # end if
     # end def
 # end class
 
+
 class CompraForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
     # end def
@@ -191,6 +201,7 @@ class CompraForm(forms.ModelForm):
         exclude = ('destino', 'origen', 'activos')
     # end class
 # end class
+
 
 class ActaSalidaForm(forms.ModelForm):
     activos = forms.ModelMultipleChoiceField(queryset=Activo.objects.all(), label=('Activos'), required=False,
@@ -203,8 +214,9 @@ class ActaSalidaForm(forms.ModelForm):
         if cuenta:
             self.fields['activos'].queryset = Activo.objects.filter(
                 Q(bodega=cuenta.bodega, instalado=False) | Q(actasalida=self.instance))
-            self.fields['destino'].queryset = Bodega.objects.all().exclude(id=cuenta.bodega.id)
-        #end if
+            self.fields['destino'].queryset = Bodega.objects.all(
+            ).exclude(id=cuenta.bodega.id)
+        # end if
     # end def
 
     class Meta:
@@ -224,13 +236,16 @@ class ActaSalidaForm(forms.ModelForm):
                 self.instance.creado_por = cuenta
                 return super(ActaSalidaForm, self).clean()
             else:
-                raise forms.ValidationError("Necesita tener una cuenta para crear el Apta de Salida")
+                raise forms.ValidationError(
+                    "Necesita tener una cuenta para crear el Apta de Salida")
             # end if
         # end if
     # end def
 # end class
 
+
 class ActaRequisicionForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super(ActaRequisicionForm, self).__init__(*args, **kwargs)
     # end def
@@ -251,14 +266,16 @@ class ActaRequisicionForm(forms.ModelForm):
                 self.instance.bodega = cuenta.bodega
                 return super(ActaRequisicionForm, self).clean()
             else:
-                raise forms.ValidationError("Necesita tener una cuenta para crear el Apta de Requisicion")
+                raise forms.ValidationError(
+                    "Necesita tener una cuenta para crear el Apta de Requisicion")
             # end if
         # end if
-    #end def
+    # end def
 # end class
 
 
 class ActivoForm(forms.ModelForm):
+
     class Meta:
         model = Activo
         exclude = ('bodega', 'activado')
@@ -274,7 +291,8 @@ class ActivoForm(forms.ModelForm):
             if cuenta:
                 return super(ActivoForm, self).clean()
             else:
-                raise forms.ValidationError("Necesita tener una cuenta para registrar el activo")
+                raise forms.ValidationError(
+                    "Necesita tener una cuenta para registrar el activo")
             # end def
             # end if
             # end def
@@ -283,6 +301,7 @@ class ActivoForm(forms.ModelForm):
 # end class
 
 class ActivoNoSerialForm(forms.ModelForm):
+
     class Meta:
         model = ActivoNoSerial
         exclude = ('bodega',)
@@ -296,15 +315,16 @@ class ActivoNoSerialForm(forms.ModelForm):
             if cuenta:
                 return super(ActivoNoSerialForm, self).clean()
             else:
-                raise forms.ValidationError("Necesita tener una cuenta para registrar el activo no serial")
+                raise forms.ValidationError(
+                    "Necesita tener una cuenta para registrar el activo no serial")
             # end if
         # end if
     # end def
 # end class
 
 
-
 class SalidaNoSerialForm(forms.ModelForm):
+
     class Meta:
         model = SalidaNoSerial
         exclude = ()
@@ -317,8 +337,8 @@ class SalidaNoSerialForm(forms.ModelForm):
 # end class
 
 
-
 class RequisicionArticuloForm(forms.ModelForm):
+
     class Meta:
         model = RequisicionArticulo
         exclude = ()
@@ -328,7 +348,9 @@ class RequisicionArticuloForm(forms.ModelForm):
     # end class
 # end class
 
+
 class RequisicionNoForm(forms.ModelForm):
+
     class Meta:
         model = RequisicionNoSerial
         exclude = ()
@@ -338,26 +360,35 @@ class RequisicionNoForm(forms.ModelForm):
     # end class
 # end class
 
+
 class BodegaForm(forms.ModelForm):
-    valor_total = forms.CharField(max_length=60, widget=forms.TextInput(attrs={'readonly': 'readonly'}), required=False)
+    valor_total = forms.CharField(max_length=60, widget=forms.TextInput(
+        attrs={'readonly': 'readonly'}), required=False)
     valor_activo = forms.CharField(max_length=60, widget=forms.TextInput(attrs={'readonly': 'readonly'}),
                                    required=False)
     valor_activo_no_serial = forms.CharField(max_length=60, widget=forms.TextInput(attrs={'readonly': 'readonly'}),
                                              required=False)
-    activos = forms.CharField(max_length=160, widget=IFrameToChangeList, required=False)
-    noserial = forms.CharField(max_length=160, widget=IFrameToChangeList, required=False, label="Activos no serial")
+    activos = forms.CharField(
+        max_length=160, widget=IFrameToChangeList, required=False)
+    noserial = forms.CharField(
+        max_length=160, widget=IFrameToChangeList, required=False, label="Activos no serial")
 
     def __init__(self, *args, **kwargs):
         super(BodegaForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
-            self.initial['valor_total'] = u"$ %s" % (self.instance.precio_total(),)
-            self.initial['valor_activo'] = u"%s" % (self.instance.precio_activos(),)
-            self.initial['valor_activo_no_serial'] = u"%s" % (self.instance.precio_activos_no_serial(),)
+            self.initial['valor_total'] = u"$ %s" % (
+                self.instance.precio_total(),)
+            self.initial['valor_activo'] = u"%s" % (
+                self.instance.precio_activos(),)
+            self.initial['valor_activo_no_serial'] = u"%s" % (
+                self.instance.precio_activos_no_serial(),)
             # self.fields['valor_total'].widget = MoneyInput()
             self.initial['activos'] = 'admin:inventario_activo'
             self.initial['noserial'] = 'admin:inventario_activonoserial'
-            self.fields['activos'].widget.extra = "&bodega__id__exact=" + str(self.instance.pk)
-            self.fields['noserial'].widget.extra = "&bodega__id__exact=" + str(self.instance.pk)
+            self.fields[
+                'activos'].widget.extra = "&bodega__id__exact=" + str(self.instance.pk)
+            self.fields[
+                'noserial'].widget.extra = "&bodega__id__exact=" + str(self.instance.pk)
         # end if
 
     # end def
@@ -371,25 +402,33 @@ class BodegaForm(forms.ModelForm):
 
 
 class BodegaStackForm(forms.ModelForm):
-    capital_en_bodega = forms.CharField(max_length=60, label="Capital en bodega", required=False)
-    irbodega = forms.CharField(max_length=160, required=False, label="", widget=LinkToChangeModel())
-    iractivos = forms.CharField(max_length=160, required=False, label="", widget=LinkToChangeList())
-    irnserial = forms.CharField(max_length=160, required=False, label="", widget=LinkToChangeList())
+    capital_en_bodega = forms.CharField(
+        max_length=60, label="Capital en bodega", required=False)
+    irbodega = forms.CharField(
+        max_length=160, required=False, label="", widget=LinkToChangeModel())
+    iractivos = forms.CharField(
+        max_length=160, required=False, label="", widget=LinkToChangeList())
+    irnserial = forms.CharField(
+        max_length=160, required=False, label="", widget=LinkToChangeList())
 
     def __init__(self, *args, **kwargs):
         super(BodegaStackForm, self).__init__(*args, **kwargs)
         self.fields['capital_en_bodega'].widget.attrs['disabled'] = True
         if self.instance.pk:
-            self.initial['capital_en_bodega'] = self.instance.bodega.capital_en_bodega()
+            self.initial[
+                'capital_en_bodega'] = self.instance.bodega.capital_en_bodega()
             self.initial['irbodega'] = self.instance.bodega
             self.initial['iractivos'] = 'admin:inventario_activo'
             self.initial['irnserial'] = 'admin:inventario_activonoserial'
 
             self.fields['irbodega'].widget.label = "Ir a la bodega"
             self.fields['iractivos'].widget.label = "Ver los activos"
-            self.fields['iractivos'].widget.extra = "?bodega__id__exact=" + str(self.instance.bodega.pk)
-            self.fields['irnserial'].widget.label = "Var los activos no seriales"
-            self.fields['irnserial'].widget.extra = "?bodega__id__exact=" + str(self.instance.bodega.pk)
+            self.fields['iractivos'].widget.extra = "?bodega__id__exact=" + \
+                str(self.instance.bodega.pk)
+            self.fields[
+                'irnserial'].widget.label = "Var los activos no seriales"
+            self.fields['irnserial'].widget.extra = "?bodega__id__exact=" + \
+                str(self.instance.bodega.pk)
         # end if
 
     # end def
@@ -399,4 +438,4 @@ class BodegaStackForm(forms.ModelForm):
         exclude = ()
     # end class
 
-#end class
+# end class
